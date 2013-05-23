@@ -1,0 +1,259 @@
+基本数据操作
+
+软件导航
+
+1.打开镜像(.RData)
+
+File->Open
+
+2.保存镜像(.RData)
+
+File->save
+
+3.工作目录
+
+Session->Set Working Directory
+
+变量类型及属性
+
+1.向量(vector)
+
+a <- c(1, 2, 3, 4, 5, 6)
+a
+## [1] 1 2 3 4 5 6
+a <- 1:10
+a
+##  [1]  1  2  3  4  5  6  7  8  9 10
+a <- seq(from = 5, to = 20, by = 5)  #by是步长
+a
+## [1]  5 10 15 20
+a <- gl(3, 4)  #gl(k,n)中，k是水平数，n是每个水平重复的次数
+a
+##  [1] 1 1 1 1 2 2 2 2 3 3 3 3
+## Levels: 1 2 3
+2.因子(factor)
+
+假设现在有一个关于人眼睛颜色的样本集合，我们可以把它表示成一个字符串队列
+
+eye.colors <- c("brown", "blue", "blue", "green", "brown", "brown", "brown")
+这是一个合理的表示，但是当样本量过大或者字符窜过长时，这种方法不是很有效。
+
+R提供了一种更好的方法-因子表示:
+
+因子(factor)是指一些变量的有序集合。而水平(level)是指因子里不相同的值。在上面的例子中，level就是blue，brown，green
+
+eye.colors <- factor(c("brown", "blue", "blue", "green", "brown", "brown", "brown"))
+levels(eye.colors)
+## [1] "blue"  "brown" "green"
+factor(1:3)
+## [1] 1 2 3
+## Levels: 1 2 3
+factor(1:3, levels = 1:5)  #设定水平为1到5
+## [1] 1 2 3
+## Levels: 1 2 3 4 5
+factor(1:3, labels = c("A", "B", "C"))
+## [1] A B C
+## Levels: A B C
+factor(1:5, exclude = 4)  #除去第四个
+## [1] 1    2    3    <NA> 5   
+## Levels: 1 2 3 5
+3.列表(list)
+
+现在有一个包裹(Parcel)要寄到纽约，包裹的大小是2x6x9，全程的运费是$12.95，在R里面，这三个属性都是不一样的类型：字符，长度为3的数值向量，长度为1的向量。
+
+我们可以把这些属性合并成一个对象(列表)：
+
+Parcel <- list(destination = "New York", dimensions = c(2, 6, 9), price = 12.95)
+另外，我们可以通过操作符$来访问列表里的每个成员，例如
+
+parcel$proce
+## Error: object 'parcel' not found
+4.数据框(Data Frame)
+
+数据框用来表示表格数据。很多时候，一个样本可能包含很多属性，这时候如果要表示一个样本集合，就需要用到数据框(行代表样本编号，列代表样本属性)
+
+例子：
+
+x <- 1:4
+n <- 10
+data.frame(x, n)
+##   x  n
+## 1 1 10
+## 2 2 10
+## 3 3 10
+## 4 4 10
+下面一个例子中，我们要根据已给数据，找出bacon这个单词在不同城市里使用频率。我们可以用data.frame来表示所给数据。
+
+top.bacon.searching.cities <- data.frame(city = c("Seattle", "Washington", "Chicago", 
+    "New York", "Portland", "St Louis", "Denver", "Boston", "Minneapolis", "Austin", 
+    "Philadelphia", "San Francisco", "Atlanta", "Los Angeles", "Richardson"), 
+    rank = c(100, 96, 94, 93, 93, 92, 90, 90, 89, 87, 85, 84, 82, 80, 80))
+该数据框表示如下
+
+top.bacon.searching.cities
+##             city rank
+## 1        Seattle  100
+## 2     Washington   96
+## 3        Chicago   94
+## 4       New York   93
+## 5       Portland   93
+## 6       St Louis   92
+## 7         Denver   90
+## 8         Boston   90
+## 9    Minneapolis   89
+## 10        Austin   87
+## 11  Philadelphia   85
+## 12 San Francisco   84
+## 13       Atlanta   82
+## 14   Los Angeles   80
+## 15    Richardson   80
+5.矩阵
+
+一个简单的生成矩阵的方式是用matrix函数
+
+matrix(data = NA, nrow = 1, ncol = 1, byrow = FALSE, dimnames = NULL)
+
+byrow表示数据给出的值是要按列填充(缺省值)还是按行填充(如果为TRUE)。可以通过dimnames给行列命名。
+
+c <- matrix(data = 1:12, nrow = 4, ncol = 3, dimnames = list(c("r1", "r2", "r3", 
+    "r4"), c("c1", "c2", "c3")))
+c
+##    c1 c2 c3
+## r1  1  5  9
+## r2  2  6 10
+## r3  3  7 11
+## r4  4  8 12
+另一种创建矩阵的方法是给维数适当的赋值(初始值为NULL)
+
+x <- 1:9
+dim(x) <- c(3, 3)
+x
+##      [,1] [,2] [,3]
+## [1,]    1    4    7
+## [2,]    2    5    8
+## [3,]    3    6    9
+变量处理及转换
+
+R中数据有很多种类型，主要有：数值型(number), 字符型(character), 逻辑型(logic),因子型(factor)。
+
+事实上，一些类型的对象之间的差异是很小的；因此改变一个对象的某些属性使它转换为另一种类型的对象是合乎逻辑的。as.something这种形式的函数可以完成转换。
+
+1.因子型转换成数值型
+
+数值型因子
+
+fac <- factor(c(1, 2, 3, 4, 10))
+fac
+## [1] 1  2  3  4  10
+## Levels: 1 2 3 4 10
+转化成数值型：
+
+as.numeric(fac)
+## [1] 1 2 3 4 5
+字符型因子
+
+fac2 <- factor(c("Male", "Female"))
+fac2
+## [1] Male   Female
+## Levels: Female Male
+转化成数值型：
+
+as.numeric(fac2)
+## [1] 2 1
+要想将一个数值型因子转换为一个数值型向量并且保持最初指定的水平 值，就必须先转换成字符型然后再转换成数值型。
+
+as.numeric(as.character(fac))
+## [1]  1  2  3  4 10
+3.变量操作(创建、显示、删除、保存)
+
+1.创建
+
+m <- 100
+name <- "Casey"
+2.显示
+
+m
+## [1] 100
+name
+## [1] "Casey"
+3.删除
+
+rm (…, list = character(), pos = -1, envir = as.environment(pos), inherits = FALSE)
+
+rm(m)
+m
+## Error: object 'm' not found
+rm(name)
+name
+## Error: object 'name' not found
+删除向量v的第3和第5个分量
+
+v <- rep(1, 10)
+v <- (as.matrix(v))[-c(3, 5), ]  #先把v转化成matrix型
+v
+## [1] 1 1 1 1 1 1 1 1
+4.保存
+
+save(…, list=character())
+
+write.table/write.csv
+
+Case Study
+
+在数据包web_subset(weblick的子数据集)上操作：
+
+### 设定工作目录
+setwd("C:/Documents and Settings/Administrator/桌面")
+### 读取weblick文件
+web <- read.csv("webclick.csv")
+### 随机选取10个样本
+web_subset <- web[sample(1:length(web[, 1]), size = 10), ]
+### 选取特定的5个属性
+web_subset <- web_subset[, c("hdid", "vtime", "domain", "htexe", "SiteType")]
+查看web_subset中各类变量的类型和属性
+
+str(web_subset)
+## 'data.frame':    10 obs. of  5 variables:
+##  $ hdid    : int  42895 185142 139072 38526 138976 125812 189958 192065 28116 117690
+##  $ vtime   : Factor w/ 1148 levels "2013-3-20 0:03",..: 1000 993 790 782 976 943 785 837 834 763
+##  $ domain  : Factor w/ 1269 levels "???????????????.org",..: 1040 208 41 221 908 340 665 1040 685 631
+##  $ htexe   : Factor w/ 52 levels "???.exe","???????.exe",..: 8 21 21 29 23 23 49 21 8 23
+##  $ SiteType: Factor w/ 79 levels "*其他不显示*",..: 76 8 18 8 61 79 6 76 78 8
+web_subset$hdid
+##  [1]  42895 185142 139072  38526 138976 125812 189958 192065  28116 117690
+### 将hdid由int型转化成factor型
+web_subset$hdid <- as.factor(web_subset$hdid)
+web_subset$hdid
+##  [1] 42895  185142 139072 38526  138976 125812 189958 192065 28116  117690
+## 10 Levels: 28116 38526 42895 117690 125812 138976 139072 185142 ... 192065
+web_subset$vtime
+##  [1] 2013-3-21 16:06 2013-3-21 15:59 2013-3-21 11:23 2013-3-21 11:15
+##  [5] 2013-3-21 15:42 2013-3-21 15:09 2013-3-21 11:18 2013-3-21 12:10
+##  [9] 2013-3-21 12:07 2013-3-21 10:56
+## 1148 Levels: 2013-3-20 0:03 2013-3-20 0:10 2013-3-20 0:13 ... 2013-3-21 9:58
+### 将vtime由factor型转化成data型
+web_subset$vtime <- as.POSIXct(web_subset$vtime)
+web_subset$vtime
+##  [1] "2013-03-21 16:06:00 CST" "2013-03-21 15:59:00 CST"
+##  [3] "2013-03-21 11:23:00 CST" "2013-03-21 11:15:00 CST"
+##  [5] "2013-03-21 15:42:00 CST" "2013-03-21 15:09:00 CST"
+##  [7] "2013-03-21 11:18:00 CST" "2013-03-21 12:10:00 CST"
+##  [9] "2013-03-21 12:07:00 CST" "2013-03-21 10:56:00 CST"
+删除SiteType这一列
+
+web_subset <- subset(web_subset, select = -c(SiteType))
+web_subset
+##        hdid               vtime        domain        htexe
+## 5975  42895 2013-03-21 16:06:00    taobao.com    360SE.exe
+## 4383 185142 2013-03-21 15:59:00    300cpa.com iexplore.exe
+## 7579 139072 2013-03-21 11:23:00      10086.cn iexplore.exe
+## 4040  38526 2013-03-21 11:15:00      3jxs.com  Maxthon.exe
+## 9717 138976 2013-03-21 15:42:00 people.com.cn IEXPLORE.EXE
+## 4001 125812 2013-03-21 15:09:00     baidu.com IEXPLORE.EXE
+## 4917 189958 2013-03-21 11:18:00        hp.com twchrome.exe
+## 9629 192065 2013-03-21 12:10:00    taobao.com iexplore.exe
+## 5562  28116 2013-03-21 12:07:00     ifeng.com    360SE.exe
+## 3073 117690 2013-03-21 10:56:00  hbpop.gov.cn IEXPLORE.EXE
+保存web_subset
+
+write.csv(web_subset, file = "web_subset.csv")
